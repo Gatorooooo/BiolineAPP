@@ -6,6 +6,7 @@ class ClassifierQuant extends Classifier {
 
   @override
   String get modelName => 'models/mobilenet_v1_1.0_224_quant.tflite';
+  //String get modelName => 'models/model_v2_quant.tflite';
 
   @override
   NormalizeOp get preProcessNormalizeOp => NormalizeOp(0, 1);

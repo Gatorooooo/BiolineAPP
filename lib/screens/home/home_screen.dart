@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:app_prototipo_bioline/app/classifier.dart';
 import 'package:app_prototipo_bioline/app/classifierQuant.dart';
 import 'package:app_prototipo_bioline/label/category.dart';
@@ -45,6 +46,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future getImageCamera() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      _image = File(pickedFile!.path);
+      _imageWidget = Image.file(_image!);
+
+      _predict();
+    });
+  }
+
   void _predict() async {
     img.Image imageInput = img.decodeImage(_image!.readAsBytesSync())!;
     var pred = _classifier.predict(imageInput);
@@ -57,48 +69,63 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('TfLite Flutter Helper',
-            style: TextStyle(color: Colors.white)),
-      ),
-      body: Column(
-        children: <Widget>[
-          Center(
-            child: _image == null
-                ? Text('No image selected.')
-                : Container(
-                    constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height / 2),
-                    decoration: BoxDecoration(
-                      border: Border.all(),
+        //appBar: AppBar(
+        //  title: Text('TfLite Flutter Helper',
+        //    style: TextStyle(color: Colors.white)),
+        //),
+        body: Column(
+          children: <Widget>[
+            Center(
+              child: _image == null
+                  ? Text('No image selected.')
+                  : Container(
+                      constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height / 2),
+                      decoration: BoxDecoration(
+                        border: Border.all(),
+                      ),
+                      child: _imageWidget,
                     ),
-                    child: _imageWidget,
-                  ),
-          ),
-          SizedBox(
-            height: 36,
-          ),
-          Text(
-            category != null ? category!.label : '',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Text(
-            category != null
-                ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
-                : '',
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
-        tooltip: 'Pick Image',
-        child: Icon(Icons.add_a_photo),
-      ),
-    );
+            ),
+            SizedBox(
+              height: 36,
+            ),
+            Text(
+              category != null ? category!.label : '',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              category != null
+                  ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
+                  : '',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+        floatingActionButton: Stack(
+          children: [
+            //Padding(padding: EdgeInsets.only(left:31)),
+            Align(
+              alignment: const Alignment(1.0, 0.6),
+              child: FloatingActionButton(
+                onPressed: getImage,
+                tooltip: 'Pick Image',
+                child: Icon(Icons.photo),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: FloatingActionButton(
+                onPressed: getImageCamera,
+                tooltip: 'Pick Image',
+                child: Icon(Icons.photo_camera),
+              ),
+            ),
+          ],
+        ));
   }
 }
 /*  String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();

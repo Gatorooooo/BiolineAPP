@@ -6,7 +6,7 @@ class ClassifierFloat extends Classifier {
 
   @override
   String get modelName => 'models/mobilenet_v1_1.0_224.tflite';
-
+  //String get modelName => 'models/model_unquant.tflite';
   @override
   NormalizeOp get preProcessNormalizeOp => NormalizeOp(127.5, 127.5);
 
